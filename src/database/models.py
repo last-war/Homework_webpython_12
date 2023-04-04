@@ -20,3 +20,11 @@ class Note(Base):
     contact_id = Column(Integer, ForeignKey('contacts.id'), nullable=False)
     text = Column(String)
     contact = relationship("Contact", backref='notes')
+
+
+class User(Base):
+    __tablename__ = 'contacts'
+    id = Column(Integer, primary_key=True)
+    email = Column(String, unique=True, nullable=False, index=True)
+    password = Column(String(255), nullable=False)
+
