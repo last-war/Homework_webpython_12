@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, String, Integer, DateTime
+from sqlalchemy import Column, ForeignKey, String, Integer, DateTime, func
 from sqlalchemy.orm import relationship, declarative_base
 
 Base = declarative_base()
@@ -12,6 +12,8 @@ class Contact(Base):
     email = Column(String, unique=True, index=True)
     phone = Column(String, index=True)
     birthday = Column(DateTime)
+    user_id = Column('user_id', ForeignKey('users.id', ondelete='CASCADE'), default=None)
+    user = relationship('User', backref='contacts')
 
 
 class Note(Base):
@@ -20,11 +22,17 @@ class Note(Base):
     contact_id = Column(Integer, ForeignKey('contacts.id'), nullable=False)
     text = Column(String)
     contact = relationship("Contact", backref='notes')
+    user_id = Column('user_id', ForeignKey('users.id', ondelete='CASCADE'), default=None)
+    user = relationship('User', backref='notes')
 
 
 class User(Base):
-    __tablename__ = 'contacts'
+    __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
-    email = Column(String, unique=True, nullable=False, index=True)
+    name = Column(String(40), nullable=False)
+    email = Column(String(120), unique=True, nullable=False, index=True)
     password = Column(String(255), nullable=False)
+    created_at = Column('created_at', DateTime, default=func.now())
+    refresh_token = Column(String(255), nullable=True)
+
 

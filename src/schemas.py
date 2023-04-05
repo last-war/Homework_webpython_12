@@ -2,6 +2,32 @@ from datetime import datetime
 from pydantic import BaseModel, Field, EmailStr
 
 
+class UserModel(BaseModel):
+    email: str = Field(min_length=4, max_length=120)
+    name: str = Field(min_length=3, max_length=40)
+    password: str = Field(min_length=8, max_length=255)
+
+class UserDb(BaseModel):
+    id: int
+    name: str
+    email: str
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class UserResponse(UserModel):
+    user: UserDb
+    status: str = 'User added'
+
+
+class TokenModel(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = 'bearer'
+
+
 class ContactModel(BaseModel):
     first_name: str = Field(max_length=150, min_length=1)
     last_name: str = Field(max_length=150, min_length=1)
