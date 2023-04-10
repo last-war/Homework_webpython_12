@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from src.database.connector import get_db
-from src.routes import contacts
+from src.routes import contacts, notes, auth
 from fastapi.responses import HTMLResponse
 
 app = FastAPI()
@@ -27,3 +27,5 @@ def healthchecker(db: Session = Depends(get_db)):
 
 app.include_router(contacts.router, prefix='/api')
 app.include_router(contacts.finder, prefix='/api')
+app.include_router(notes.router, prefix='/api')
+app.include_router(auth.router, prefix='/api')

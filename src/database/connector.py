@@ -7,7 +7,6 @@ from sqlalchemy.exc import SQLAlchemyError
 
 config = dotenv_values(".env")
 SQLALCHEMY_DATABASE_URL = config.get('DATABASE_URL')
-SQLALCHEMY_DATABASE_URL = 'postgresql://postgres:secret@127.0.0.1:5432/rest_app'
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 DBSession = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
