@@ -6,7 +6,7 @@ from src.repository import contacts as repository_contact
 from src.schemas import ContactResponse, ContactModel
 from sqlalchemy.orm import Session
 from src.database.connector import get_db
-from src.services import auth
+from src.services.auth import auth_service as auth
 
 router = APIRouter(prefix='/contacts', tags=['contacts'])
 finder = APIRouter(prefix='/contacts/find', tags=['find'])

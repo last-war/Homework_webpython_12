@@ -6,7 +6,7 @@ from src.repository import notes as repository_notes
 from src.schemas import NoteResponse, NoteModel
 from sqlalchemy.orm import Session
 from src.database.connector import get_db
-from src.services import auth
+from src.services.auth import auth_service as auth
 
 router = APIRouter(prefix='/note', tags=['note'])
 
