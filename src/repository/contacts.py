@@ -1,29 +1,30 @@
-from src.database.models import Contact
+from src.database.models import Contact, User
 from src.schemas import ContactModel
 from sqlalchemy.orm import Session
 from datetime import date, datetime
+from sqlalchemy import and_
 
 
-async def create(body: ContactModel, db: Session):
-    contact = Contact(**body.dict())
+async def create(body: ContactModel, user: User, db: Session):
+    contact = Contact(**body.dict(), user_id=user.id)
     db.add(contact)
     db.commit()
     db.refresh(contact)
     return contact
 
 
-async def get_all(db: Session):
-    contacts = db.query(Contact).all()
+async def get_all(user: User, db: Session):
+    contacts = db.query(Contact).filter(Contact.user_id == user.id).all()
     return contacts
 
 
-async def get_one(contact_id, db: Session):
-    contact = db.query(Contact).filter(id=contact_id).first()
+async def get_one(contact_id, user: User, db: Session):
+    contact = db.query(Contact).filter(and_(Contact.user_id == user.id, id=contact_id)).first()
     return contact
 
 
-async def update(contact_id, body: ContactModel, db: Session):
-    contact = await get_one(contact_id, db)
+async def update(contact_id, body: ContactModel, user: User, db: Session):
+    contact = await get_one(contact_id, user, db)
     if contact:
         contact.first_name = body.first_name
         contact.last_name = body.last_name
@@ -33,32 +34,32 @@ async def update(contact_id, body: ContactModel, db: Session):
     return contact
 
 
-async def delete(contact_id, db: Session):
-    contact = await get_one(contact_id, db)
+async def delete(contact_id, user: User, db: Session):
+    contact = await get_one(contact_id, user, db)
     if contact:
         db.delete(contact)
         db.commit()
     return contact
 
 
-async def find_by_name(contact_name, db: Session):
-    contact = db.query(Contact).filter(first_name=contact_name).first()
+async def find_by_name(contact_name, user: User, db: Session):
+    contact = db.query(Contact).filter(and_(Contact.user_id == user.id, first_name=contact_name)).first()
     return contact
 
 
-async def find_by_lastname(lastname, db: Session):
-    contact = db.query(Contact).filter(last_name=lastname).first()
+async def find_by_lastname(lastname, user: User, db: Session):
+    contact = db.query(Contact).filter(and_(Contact.user_id == user.id, last_name=lastname)).first()
     return contact
 
 
-async def find_by_email(email, db: Session):
-    contact = db.query(Contact).filter(email=email).first()
+async def find_by_email(email, user: User, db: Session):
+    contact = db.query(Contact).filter(and_(Contact.user_id == user.id, email=email)).first()
     return contact
 
 
-async def find_birthday7day(db: Session):
+async def find_birthday7day(user: User, db: Session):
     contacts = []
-    db_contacts = db.query(Contact).all()
+    db_contacts = await get_all(user, db)
     today = date.today()
     for db_contact in db_contacts:
         birthday = db_contact.birthday
